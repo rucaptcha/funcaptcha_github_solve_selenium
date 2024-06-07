@@ -22,7 +22,7 @@ def intercept_response(request, response):
 
 my_key = os.environ["APIKEY"]
 solver = TwoCaptcha(my_key)
-proxy1 = "u8753d5f4564a05ca-zone-custom-region-us:u8753d5f4564a05ca@43.159.28.126:2334"#2captcha
+
 agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
 driver = Driver(wire=True, proxy=False, headless=False, agent=agent)
 try:
