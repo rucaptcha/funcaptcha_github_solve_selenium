@@ -20,8 +20,12 @@ def intercept_response(request, response):
         data_blob = re.search(pattern, data_captcha).group(1)
         print("Data_blob received: ", data_blob)
 
-my_key = os.environ["APIKEY"]
-solver = TwoCaptcha(my_key)
+conf = {
+    'apiKey': os.environ["APIKEY"],
+    'defaultTimeout': 600
+}
+
+solver = TwoCaptcha(**conf)
 
 agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
 driver = Driver(wire=True, proxy=False, headless=False, agent=agent)
@@ -48,6 +52,7 @@ try:
     driver.click("#opt-in-container > div.d-flex.flex-items-center.flex-column.flex-sm-row > button")
     driver.sleep(10)
     curr_url = driver.current_url
+    # driver.sleep(500)
 
     try:
         print("Captcha solve...")
@@ -67,6 +72,8 @@ try:
         print(result)
     solution = result["code"]
     driver.execute_script("document.getElementsByName('octocaptcha-token')[0].value = arguments[0];", solution)
+    driver.switch_to_frame("iframe.js-octocaptcha-frame")
+    driver.execute_script("parent.postMessage({ event: 'captcha-complete', sessionToken: 'arguments[0]' }, 'https://github.com')", solution)
     print("token inserted!!")
     driver.sleep(2)
     driver.click("#captcha-and-submit-container > div:nth-child(6) > button")
